@@ -38,4 +38,4 @@ terraform.rc
 
 #Ignore Commands File
 
-commands.txt
+*.txt

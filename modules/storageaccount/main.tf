@@ -1,12 +1,5 @@
-locals {
-  project_name = "ibexh"
-  environment  = "pre"
-  region       = "eus"
-  sa_name      = "${local.project_name}${local.environment}${local.region}sa"
-}
-
 resource "azurerm_storage_account" "azsa" {
-  name                     = local.sa_name
+  name                     = var.sa_name
   resource_group_name      = var.rg_name
   location                 = var.location
   account_tier             = var.account_tier

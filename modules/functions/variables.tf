@@ -37,6 +37,7 @@ variable "app_service_plan_name" {
 
 variable "app_service_sku_name" {
   description = "The name of the App Service plan to create."
+  type = string
   default     = "Y1"
 }
 
