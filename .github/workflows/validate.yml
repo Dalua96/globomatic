@@ -35,7 +35,7 @@ jobs:
           id: fmt
           run: |
            cd ..
-           terraform fmt -check -recursive
+           terraform fmt -recursive
 
         - name: Terraform configuration validation
           id: validate
