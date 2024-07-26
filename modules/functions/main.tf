@@ -1,9 +1,10 @@
 resource "azurerm_storage_account" "safunc" {
-  name                     = var.storage_account_name
+  name                     = lower(var.storage_account_name)
   resource_group_name      = var.rg_name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  tags = var.common_tags
 }
 
 resource "azurerm_service_plan" "azfuncsp" {
@@ -12,6 +13,7 @@ resource "azurerm_service_plan" "azfuncsp" {
   location            = var.location
   os_type             = var.app_service_plan_os_type
   sku_name            = var.app_service_sku_name
+  tags = var.common_tags
 }
 
 resource "azurerm_linux_function_app" "azfuncapp" {
@@ -31,4 +33,5 @@ resource "azurerm_linux_function_app" "azfuncapp" {
       python_version = var.funtion_worker_runtime_version
     }
   }
+  tags = var.common_tags
 }

@@ -41,5 +41,10 @@ variable "app_service_sku_name" {
   default     = "Y1"
 }
 
+variable "common_tags" {
+  type        = map(string)
+  description = "Map of tags to be applied to all resources"
+  default     = {}
+}
 
 

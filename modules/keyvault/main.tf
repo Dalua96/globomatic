@@ -5,5 +5,6 @@ resource "azurerm_key_vault" "azkv01" {
   location            = var.location
   tenant_id           = var.tenantId
   sku_name            = var.sku_name
+  tags = var.common_tags
 
 }

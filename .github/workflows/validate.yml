@@ -1,0 +1,56 @@
+name: Validate and Format Terraform code
+
+on: [push, workflow_dispatch]
+jobs:
+    terraform:
+        name: Terraform
+        runs-on: ubuntu-latest
+        env:
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./dev ./modules
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: ${{ secrets.TERRAFORM_VERSION }}
+
+        - name: Show Terraform version
+          id: version
+          run: terraform version
+
+        - name: Terraform init
+          id: init
+          run: terraform init
+
+        - name: Terraform format
+          id: fmt
+          run: |
+           cd ..
+           terraform fmt -check -recursive
+
+        - name: Terraform configuration validation
+          id: validate
+          if: (success() || failure())
+          run: terraform validate -no-color
+
+        - name: Checkov
+          id: checkov
+          if: (success() || failure())
+          uses: bridgecrewio/checkov-action@master
+          with:
+            quiet: true
+            framework: terraform
+            container_user: 1000
+            output_format: github_failed_only
+            soft_fail: false
+            skip_check: CKV_AZURE_88,CKV_AZURE_71,CKV_AZURE_16,CKV_AZURE_80,CKV_AZURE_63,CKV_AZURE_18,CKV_AZURE_65,CKV_AZURE_17,CKV_AZURE_13,CKV_AZURE_78,CKV_AZURE_66,CKV_AZURE_44,CKV_AZURE_35,CKV_AZURE_43,CKV_AZURE_33,CKV_AZURE_3,CKV2_AZURE_1,CKV2_AZURE_18,CKV2_AZURE_8,CKV2_AZURE_21,CKV_GIT_4
+        

@@ -1,11 +1,9 @@
-# comentario resource name
-
-
 resource "azurerm_virtual_network" "azvn01" {
   name                = var.vnet_name
   resource_group_name = var.rg_name
   location            = var.location
   address_space       = [var.vnet_address]
+  tags = var.common_tags
 
 }
 

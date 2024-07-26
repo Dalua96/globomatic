@@ -6,6 +6,6 @@ resource "azurerm_storage_account" "azsa" {
   account_kind             = var.account_kind
   account_replication_type = var.account_replication_type
   is_hns_enabled           = var.is_hns_enabled
-
+  tags = var.common_tags
 
 }
