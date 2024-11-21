@@ -14,6 +14,10 @@ jobs:
             run:
                 shell: bash
                 working-directory: ./dev
+                
+        permissions:
+          pull-requests: write
+
         steps:
         - uses: hashicorp/setup-terraform@v3
 
