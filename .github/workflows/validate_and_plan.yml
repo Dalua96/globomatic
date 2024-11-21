@@ -53,7 +53,7 @@ jobs:
         - name: Terraform Plan
           id: plan
           run: |
-           terraform plan -no-color -detailed-exitcode #-out=tf.plan
+           terraform plan -no-color -detailed-exitcode -json #-out=tf.plan
           continue-on-error: true
 
         # - name: Terraform JSON output
@@ -64,8 +64,11 @@ jobs:
         #   run: |
         #     cat tfplan.json
     
-        - run: echo ${{ steps.plan.outputs.stdout }}
+        - run: echo ${{ steps.plan.outcome }}
+
         - run: echo ${{ steps.plan.outputs.stderr }}
+
         - run: echo ${{ steps.plan.outputs.exitcode }}
+
             
           
