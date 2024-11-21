@@ -1,0 +1,62 @@
+name: Validate and Plan Terraform code
+
+on: [push, workflow_dispatch]
+jobs:
+    terraform:
+        name: Terraform
+        runs-on: ubuntu-latest
+        env:
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        defaults:
+            run:
+                shell: bash
+                working-directory: ./dev
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: ${{ secrets.TERRAFORM_VERSION }}
+
+        # - name: Set up Azure Credentials
+        #   uses: azure/login@v1
+        #   with:
+        #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        #     client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+        - name: Show Terraform version
+          id: version
+          run: terraform version
+
+        - name: Terraform init
+          id: init
+          run: terraform init
+
+        - name: Terraform format
+          id: fmt
+          run: |
+           cd ..
+           terraform fmt -recursive
+
+        - name: Terraform configuration validation
+          id: validate
+          if: (success() || failure())
+          run: terraform validate -no-color
+
+        - name: Terraform Plan
+          id: plan
+          run: |
+           terraform plan chdir=terraform/workspace -out=tf.plan
+           
+        - name: Terraform JSON output
+          id: json
+          run: terraform -chdir=terraform/workspace show -json tf.plan > tfplan.json
+            
+          
