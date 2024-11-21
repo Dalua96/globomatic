@@ -1,6 +1,6 @@
 name: Validate and Format Terraform code
 
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 jobs:
     terraform:
         name: Terraform

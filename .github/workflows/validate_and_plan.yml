@@ -53,10 +53,10 @@ jobs:
         - name: Terraform Plan
           id: plan
           run: |
-           terraform plan chdir=terraform/workspace -out=tf.plan
-           
+           terraform plan  -out=tf.plan
+
         - name: Terraform JSON output
           id: json
-          run: terraform -chdir=terraform/workspace show -json tf.plan > tfplan.json
+          run: terraform show -json tf.plan > tfplan.json
             
           
