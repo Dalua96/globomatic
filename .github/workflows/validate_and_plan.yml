@@ -19,7 +19,7 @@ jobs:
           uses: actions/checkout@v2
         
         - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v2
+          uses: hashicorp/setup-terraform@v3
           with:
             terraform_version: ${{ secrets.TERRAFORM_VERSION }}
 
@@ -53,11 +53,19 @@ jobs:
         - name: Terraform Plan
           id: plan
           run: |
-           terraform plan -out=tf.plan
+           terraform plan -no-color -detailed-exitcode -out=tf.plan
           continue-on-error: true
 
         - name: Terraform JSON output
           id: json
           run: terraform show -json tf.plan > tfplan.json
+        
+        - name: Show tfplan.json contents
+          run: |
+            cat tfplan.json
+    
+        - run: echo ${{ steps.plan.outputs.stdout }}
+        - run: echo ${{ steps.plan.outputs.stderr }}
+        - run: echo ${{ steps.plan.outputs.exitcode }}
             
           
