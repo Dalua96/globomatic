@@ -89,14 +89,13 @@ jobs:
                     | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/' >> plan.md
                 fi
                 cat plan.md >> $GITHUB_STEP_SUMMARY
-                cat plan.md
   
         - name: Create a comment in PR
           id: commentpr
           uses: actions/github-script@v7
           #if: github.event_name == 'pull_request'
           env:
-            PLAN: "terraform\n${{steps.display.outputs.stdout}}"
+            PLAN: "terraform\n $(cat plan.md)"
           with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             script: |
