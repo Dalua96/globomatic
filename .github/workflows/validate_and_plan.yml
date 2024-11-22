@@ -65,31 +65,30 @@ jobs:
         - name: Terraform Plan
           id: plan
           run: |
-           terraform plan -no-color -detailed-exitcode #-json -out=tf.plan
-          continue-on-error: true
-
-        # - name: Terraform JSON output
-        #   id: json
-        #   run: terraform show -json tf.plan > tfplan.json
-        
-        # - name: Show tfplan.json contents
-        #   run: |
-        #     cat tfplan.json
-    
-        - name: Echo STDout
-          id: stdout
-          run: echo ${{ steps.plan.outputs.stdout }}
-          continue-on-error: true
-
-        - name: Echo STDerr
-          id: stderr
-          run: echo ${{ steps.plan.outputs.stderr }}
+              terraform plan -input=false -no-color -out=tfplan
+              terraform show -no-color tfplan > plan.txt
           continue-on-error: true
 
         - name: Echo Exitcode
           id: exitcode
           run: echo ${{ steps.plan.outputs.exitcode }}
           continue-on-error: true
+
+        - name: Display the plan summary
+          id: display
+          run: |
+                if grep -q "No changes. Your infrastructure matches the configuration." plan.txt; then
+                  echo "## No changes to be made." > plan.md
+                  echo "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed." >> plan.md
+                else
+                  echo "## Terraform will perform the following actions:" > plan.md
+                  echo "| Action  | Resource |" >> plan.md
+                  echo "| ------- | -------- |" >> plan.md
+                  # Filter Terraform actions and format the plan
+                  awk '/will be/ || /must be/ {print "| " $5 " | " $2 " |"; next} /Plan:/ { print "## " $0; next }' plan.txt \
+                    | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/' >> plan.md
+                fi
+                cat plan.md >> $GITHUB_STEP_SUMMARY  
 
         - uses: actions/github-script@v7
           #if: github.event_name == 'pull_request'
@@ -125,8 +124,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: output
-              })
-
-            
+                body: plan.md
+              })  
           
