@@ -13,7 +13,7 @@ jobs:
         defaults:
             run:
                 shell: bash
-                working-directory: dev
+                working-directory: ./dev
 
         permissions:
           pull-requests: write
