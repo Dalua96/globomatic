@@ -89,6 +89,7 @@ jobs:
                     | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/' >> plan.md
                 fi
                 cat plan.md >> $GITHUB_STEP_SUMMARY
+                cat plan.md
   
         - name: Create a comment in PR
           id: commentpr
