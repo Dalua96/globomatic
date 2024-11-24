@@ -89,7 +89,10 @@ jobs:
                     | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/' >> plan.md
                 fi
                 cat plan.md >> $GITHUB_STEP_SUMMARY
-                echo -e "PLAN=$(cat plan.md)" >> "$GITHUB_OUTPUT"
+                
+                echo "PLAN<<EOF" >> "$GITHUB_OUTPUT"
+                cat plan.md >> "$GITHUB_OUTPUT"
+                echo "EOF" >> "$GITHUB_OUTPUT"
 
   
         - name: Create a comment in PR
