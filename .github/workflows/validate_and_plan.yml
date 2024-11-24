@@ -82,7 +82,7 @@ jobs:
                   echo "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed." >> plan.md
                 else
                   echo PLAN=$(awk '/Terraform used the selected providers to generate the following execution/ {found=1} found' plan.txt)
-                  echo "PLAN=$PLAN" >> "$GITHUB_OUTPUT"
+                  echo "PLAN=echo $PLAN" >> "$GITHUB_OUTPUT"
                   echo "## Terraform will perform the following actions:" > plan.md
                   echo "| Action  | Resource |" >> plan.md
                   echo "| ------- | -------- |" >> plan.md
