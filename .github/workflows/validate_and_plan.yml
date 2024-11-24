@@ -1,10 +1,10 @@
 name: Validate and Plan Terraform code
 
 on: 
-  push:
+  #push:
   workflow_dispatch: #[push, workflow_dispatch]
-  # pull_request:
-  #   types: [opened, synchronize, reopened]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
     terraform:
@@ -81,8 +81,8 @@ jobs:
                   echo "## No changes to be made." > plan.md
                   echo "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed." >> plan.md
                 else
-                  output=$(awk '/Terraform used the selected providers to generate the following execution plan/ {found=1} found' plan.txt)
-                  echo "plan=$output" >> "$GITHUB_OUTPUT"
+                  PLAN=$(awk '/Terraform used the selected providers to generate the following execution plan/ {found=1} found' plan.txt)
+                  echo "PLAN=$PLAN" >> "$GITHUB_OUTPUT"
                   echo "## Terraform will perform the following actions:" > plan.md
                   echo "| Action  | Resource |" >> plan.md
                   echo "| ------- | -------- |" >> plan.md
