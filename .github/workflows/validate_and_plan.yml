@@ -78,9 +78,10 @@ jobs:
           id: display
           run: |
                 if grep -q "No changes. Your infrastructure matches the configuration." plan.txt; then
+                  awk '/No changes. Your infrastructure matches the configuration./ {found=1} found' plan.txt  >> tfplan.txt
                   echo "## No changes to be made." > plan.md
                   echo "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed." >> plan.md
-                else
+                elif
                   awk '/Terraform used the selected providers to generate the following execution/ {found=1} found' plan.txt  >> tfplan.txt
                   echo "## Terraform will perform the following actions:" > plan.md
                   echo "| Action  | Resource |" >> plan.md
@@ -88,6 +89,12 @@ jobs:
                   # Filter Terraform actions and format the plan
                   awk '/will be/ || /must be/ {print "| " $5 " | " $2 " |"; next} /Plan:/ { print "## " $0; next }' plan.txt \
                     | sed -e 's/created/:white_check_mark: create/' -e 's/destroyed/:bangbang: destroy/' -e 's/replaced/:recycle: replace/' >> plan.md
+                else
+                 echo "## Plan Failed ##" >> plan.md
+                 awk '/Planning failed. Terraform encountered an error while generating this plan./ {found=1} found' plan.txt  >> tfplan.txt
+                 awk '/ Error: / {sub(/^│ Error:/, "| " " Error " " | " ""); print}' plan.txt \
+                   | sed -e 's/Error:x: Error/' >> plan.md
+
                 fi
                 cat plan.md >> $GITHUB_STEP_SUMMARY
                 
