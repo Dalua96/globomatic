@@ -81,7 +81,7 @@ jobs:
                   awk '/No changes. Your infrastructure matches the configuration./ {found=1} found' plan.txt  >> tfplan.txt
                   echo "## No changes to be made." > plan.md
                   echo "Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed." >> plan.md
-                elif grep -q "Terraform used the selected providers to generate the following execution" plan.txt 
+                elif grep -q "Terraform used the selected providers to generate the following execution" plan.txt; then
                   awk '/Terraform used the selected providers to generate the following execution/ {found=1} found' plan.txt  >> tfplan.txt
                   echo "## Terraform will perform the following actions:" > plan.md
                   echo "| Action  | Resource |" >> plan.md
